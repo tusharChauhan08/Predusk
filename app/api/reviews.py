@@ -8,6 +8,7 @@ from app.dependencies import get_db
 from app.utils.response import create_response
 from app.db.schema.reviews import PostReviews, UpdateReviews
 import logging
+from datetime import datetime
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -16,11 +17,6 @@ logger = logging.getLogger(__name__)
 @router.post("/", summary="Api for posting reviews on book data")
 async def post_reviews(request: PostReviews, db = Depends(get_db)):
     try:
-        query = await db.execute(select(Reviews).where(Reviews.book_id == request.book_id))
-        review = query.scalars().first()
-        if review:
-            return create_response(status.HTTP_200_OK, "Review is already posted on this book.", data={"result": review})
-        
         review_data = Reviews(
             book_id = request.book_id,
             ratings = request.ratings,
@@ -46,7 +42,7 @@ async def update_review(request: UpdateReviews, db = Depends(get_db)):
             return create_response(status.HTTP_404_NOT_FOUND, "Book review is not found")
         
         update_data = request.model_dump(exclude_unset=True)
-        for key, value in update_data:
+        for key, value in update_data.items():
             if value not in ("", None):
                 setattr(review, key, value)
 
@@ -73,7 +69,9 @@ async def get_reviews(review_id:int = Query(..., description="specific review da
             "id": review.id,
             "reviewer_name": review.reviewer_name,
             "ratings": review.ratings,
-            "reviews": review.reviews,
+            "reviews": review.review,
+            "created_at": review.created_at.isoformat() if isinstance(review.updated_at, datetime) else None,
+            "updated_at": review.updated_at.isoformat() if isinstance(review.updated_at, datetime) else None,
     
             "book": {
                 "id": book.id,
@@ -81,7 +79,8 @@ async def get_reviews(review_id:int = Query(..., description="specific review da
                 "author": book.author,
                 "language": book.language,
                 "description": book.description,
-                "created_at": book.created_at
+                "created_at": book.created_at.isoformat() if isinstance(book.created_at, datetime) else None,
+                "updated_at": book.updated_at.isoformat() if isinstance(book.updated_at, datetime) else None
             } if book else None
         }
 

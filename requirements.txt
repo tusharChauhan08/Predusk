@@ -4,3 +4,4 @@ pydantic-settings
 psycopg2-binary
 asyncpg
 alembic
+redis>=4.2.0

@@ -2,8 +2,9 @@ from sqlalchemy import Text, String, Integer, ForeignKey, Column
 from sqlalchemy.orm import relationship
 from app.core.config import settings
 from app.db.base_mixin import TimestampMixin
+from app.db.base import Base
 
-class Reviews(TimestampMixin):
+class Reviews(Base, TimestampMixin):
     __tablename__ = "reviews"
     __table_args__ = {'extend_existing': True}
 

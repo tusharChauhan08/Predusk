@@ -8,6 +8,7 @@ class CreateBooks(BaseModel):
     language: str
 
 class UpdateBooks(BaseModel):
+    id: int
     book_name: Optional[str] = None 
     author: Optional[str] = None
     description: Optional[str] = None
