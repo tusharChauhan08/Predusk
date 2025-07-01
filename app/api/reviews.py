@@ -68,7 +68,7 @@ async def get_reviews(review_id:int = Query(..., description="specific review da
             return create_response(status.HTTP_404_NOT_FOUND, "Review is not found given review id")
         
         book = review.book
-        
+
         review_data = {
             "id": review.id,
             "reviewer_name": review.reviewer_name,
@@ -96,17 +96,17 @@ async def get_reviews(review_id:int = Query(..., description="specific review da
 @router.delete("/", summary="Api for deleting reviews data")
 async def books(review_id:int = Query(..., description="review_id to delete a particular review"), db = Depends(get_db)):
     try:
-        query = await db.execute(select(Reviews).where(Reviews.id == book_id))
-        book = query.scalars().first()  
-        if not book:
-            return create_response(status.HTTP_404_NOT_FOUND, "Book is not found please enter this book data.")
+        query = await db.execute(select(Reviews).where(Reviews.id == review_id))
+        review = query.scalars().first()  
+        if not review:
+            return create_response(status.HTTP_404_NOT_FOUND, "Review is not given review id")
         
-        await db.delete(book)
+        await db.delete(review)
 
         await db.commit()
 
-        return create_response(status.HTTP_200_OK, "Book is deleted sucesfully")
+        return create_response(status.HTTP_200_OK, "Review is deleted sucesfully")
 
     except Exception as err:
-        logger.error("Error in entering book data api %s", err)
+        logger.error("Error in delete review data api %s", err)
         return create_response(status.HTTP_500_INTERNAL_SERVER_ERROR, settings.INTERNAL_SERVER_ERROR, detail=str(err))
