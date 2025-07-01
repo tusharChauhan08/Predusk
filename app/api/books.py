@@ -96,7 +96,7 @@ async def get_books(book_id: int = Query(None, description="If you want specific
                 "reviews": [
                     {
                         "id": review.id,
-                        "rating": review.rating,
+                        "ratings": review.ratings,
                         "review": review.review,
                         "created_at": review.created_at.isoformat() if isinstance(review.updated_at, datetime) else None,
                         "updated_at": review.updated_at.isoformat() if isinstance(review.updated_at, datetime) else None,
